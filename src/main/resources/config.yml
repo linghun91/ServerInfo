@@ -1,0 +1,39 @@
+# ServerInfo 插件配置文件
+
+# Web服务器设置
+web-server:
+  # Web服务器监听的端口
+  port: 25581
+  # 是否允许外部访问（true允许任何IP访问，false仅允许本地访问）
+  allow-external-access: true
+
+# BungeeCord 集成设置
+bungeecord:
+  # 是否启用BungeeCord模式（需要在BungeeCord上安装相应的插件）
+  enabled: true
+  
+  # BungeeCord服务器信息
+  server:
+    # 如果需要手动指定服务器标识，否则会自动检测
+    name: ""
+
+# 独立模式设置 (当bungeecord.enabled=true时使用)
+standalone:
+  # 即使在BungeeCord模式下也启动本地Web服务器
+  web-server: false
+
+# 认证系统设置
+authentication:
+  # 是否启用认证系统
+  enabled: false
+
+# 消息通道设置
+messaging:
+  # 用于与BungeeCord通信的通道名称
+  channel: "playerinfo:channel"
+  
+  # 数据发送间隔（秒）
+  data-send-interval: 30
+
+# 调试模式
+debug: false 

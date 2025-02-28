@@ -1,0 +1,30 @@
+# ServerInfo BungeeCord插件配置文件
+
+# 调试模式
+debug: false
+
+# Web服务器设置
+web-server:
+  # Web服务器监听的端口
+  port: 25581
+  # 是否允许外部访问（true允许任何IP访问，false仅允许本地访问）
+  allow-external-access: true
+
+# 认证系统设置
+authentication:
+  # 是否启用认证系统 (确保此项设为true以生成passwd.yml)
+  enabled: true
+
+# 消息通道设置
+messaging:
+  # 用于与Spigot子服通信的通道名称
+  channel: "playerinfo:channel"
+  # 数据刷新请求间隔（秒）
+  refresh-interval: 30
+
+# 数据管理设置
+data:
+  # 数据清理间隔（分钟）
+  cleanup-interval: 5
+  # 数据最大保存时间（分钟）
+  max-age: 60 

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServerInfo - 登录</title>
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">ServerInfo 登录</div>
+        
+        <div class="login-content">
+            <form id="loginForm" class="login-form">
+                <div class="input-container">
+                    <label for="username">用户名:</label>
+                    <input type="text" id="username" name="username" autocomplete="username" placeholder="输入用户名">
+                </div>
+                
+                <div class="input-container">
+                    <label for="password">密码:</label>
+                    <input type="password" id="password" name="password" autocomplete="current-password" placeholder="输入密码">
+                </div>
+                
+                <div class="remember-me">
+                    <input type="checkbox" id="rememberMe" name="rememberMe">
+                    <label for="rememberMe">记住我 (30天)</label>
+                </div>
+                
+                <button type="submit" class="login-button">登录</button>
+            </form>
+            
+            <div id="errorMessage" class="error-message"></div>
+            
+            <div id="loading" class="loading">
+                正在登录<span class="loading-dots"></span>
+            </div>
+        </div>
+        
+        <div class="login-footer">© ServerInfo Plugin</div>
+    </div>
+    
+    <script src="js/auth.js"></script>
+</body>
+</html> 
