@@ -1,0 +1,11 @@
+{
+    "economy": "金币",
+    "points": "点券",
+    "attack": "攻击",
+    "defense": "防御",
+    "moving": "移速",
+    "health": "生命",
+    "mana": "魔力",
+    "crit": "暴率",
+    "crit_rate": "爆伤"
+} 

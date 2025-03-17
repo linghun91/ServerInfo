@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>ServerInfo</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/skinview3d@3.0.0-alpha.1/bundles/skinview3d.bundle.js"></script>
+    <script>
+        // 检查会话状态
+        fetch('/api/auth/check', {
+            method: 'GET',
+            credentials: 'include'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.loggedIn) {
+                // 已登录，重定向到仪表盘
+                window.location.href = '/dashboard.html';
+            } else {
+                // 未登录，重定向到登录页面
+                window.location.href = '/login.html';
+            }
+        })
+        .catch(error => {
+            console.error('检查会话状态错误:', error);
+            // 出错时重定向到登录页面
+            window.location.href = '/login.html';
+        });
+    </script>
+    <style>
+        /* 服务器选择器样式 */
+        .server-selector {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .server-selector-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        .server-selector-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+        
+        .server-list {
+            display: none;
+            margin-top: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .server-list.active {
+            display: block;
+        }
+        
+        .server-item {
+            padding: 8px 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .server-item:hover {
+            background-color: #e9e9e9;
+        }
+        
+        .server-item.active {
+            background-color: #e2f3fd;
+            font-weight: bold;
+        }
+        
+        .player-count {
+            background-color: #4caf50;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+        
+        .arrow-icon {
+            transition: transform 0.3s;
+        }
+        
+        .arrow-icon.active {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body>
+    <p>正在加载，请稍候...</p>
+</body>
+</html> 

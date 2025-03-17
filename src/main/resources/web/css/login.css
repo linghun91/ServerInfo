@@ -1,0 +1,188 @@
+/* 登录页面样式 - 灰色风格 */
+
+/* 导入Minecraft字体 */
+@font-face {
+    font-family: 'Minecraft';
+    src: url('../fonts/minecraft.woff2') format('woff2'),
+         url('../fonts/minecraft.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* 基础样式 */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+}
+
+/* 登录容器 */
+.login-container {
+    width: 350px;
+    box-shadow: 0 3px 9px rgba(0, 0, 0, 0.3);
+    border: 3px solid #444;
+    overflow: hidden;
+}
+
+/* 页眉 */
+.login-header {
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    padding: 15px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* 内容区域 */
+.login-content {
+    background-color: #ccc;
+    padding: 25px 25px 10px 25px;
+}
+
+/* 表单样式 */
+.login-form {
+    display: flex;
+    flex-direction: column;
+}
+
+/* 输入框容器 */
+.input-container {
+    margin-bottom: 15px;
+    position: relative;
+}
+
+/* 标签样式 */
+.input-container label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* 输入框样式 */
+.input-container input {
+    width: 100%;
+    padding: 10px;
+    background-color: #888;
+    border: 3px solid #444;
+    color: #fff;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.input-container input::placeholder {
+    color: #ccc;
+}
+
+.input-container input:focus {
+    outline: none;
+    background-color: #777;
+}
+
+/* 记住我选项 */
+.remember-me {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.remember-me input {
+    margin-right: 8px;
+    width: 20px;
+    height: 20px;
+    appearance: none;
+    background-color: #888;
+    border: 3px solid #444;
+    position: relative;
+}
+
+.remember-me input:checked::after {
+    content: "✓";
+    position: absolute;
+    top: 0;
+    left: 5px;
+    color: #fff;
+    font-size: 16px;
+}
+
+/* 登录按钮 */
+.login-button {
+    background-color: #555;
+    border: 3px solid #444;
+    padding: 5px;
+    font-size: 16px;
+    color: #fff;
+    cursor: pointer;
+    text-align: center;
+    margin: 0 auto;
+    display: block;
+    width: 100px;
+}
+
+.login-button:hover {
+    background-color: #444;
+}
+
+.login-button:active {
+    background-color: #333;
+}
+
+/* 错误消息 */
+.error-message {
+    color: red;
+    margin-top: 5px;
+    text-align: center;
+    min-height: 0px;
+}
+
+/* 加载指示器 */
+.loading {
+    display: none;
+    text-align: center;
+    margin-top: 15px;
+}
+
+.loading-dots:after {
+    content: '.';
+    animation: dots 1.5s steps(5, end) infinite;
+}
+
+@keyframes dots {
+    0%, 20% {
+        content: '.';
+    }
+    40% {
+        content: '..';
+    }
+    60% {
+        content: '...';
+    }
+    80%, 100% {
+        content: '';
+    }
+}
+
+/* 页脚 */
+.login-footer {
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    font-size: 14px;
+    border-top: 3px solid #444;
+}
+
+/* 响应式调整 */
+@media (max-width: 400px) {
+    .login-container {
+        width: 90%;
+    }
+} 
