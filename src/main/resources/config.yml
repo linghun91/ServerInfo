@@ -20,7 +20,7 @@ bungeecord:
 # 独立模式设置 (当bungeecord.enabled=true时使用)
 standalone:
   # 即使在BungeeCord模式下也启动本地Web服务器
-  web-server: true
+  web-server: false
 
 # 认证系统设置
 authentication:
