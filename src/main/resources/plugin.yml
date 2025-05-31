@@ -1,0 +1,23 @@
+name: PlayerInfo
+version: ${version}
+main: cn.i7mc.playerinfo.plugin.BukkitPlugin
+api-version: 1.12
+author: i7mc
+description: A player information display plugin with web interface
+softdepend: [PlaceholderAPI, DragonCore]
+
+commands:
+  playerinfo:
+    description: PlayerInfo plugin commands
+    aliases: [pinfo, pi]
+    usage: |
+      §e==== PlayerInfo Commands ====
+      §f/playerinfo reload - Reload the plugin
+      §f/playerinfo reload placeholders - Reload placeholders configuration
+      §f/playerinfo status - Check the plugin status
+      §f/playerinfo version - Show plugin version
+
+permissions:
+  playerinfo.admin:
+    description: Allows access to all PlayerInfo commands
+    default: op 

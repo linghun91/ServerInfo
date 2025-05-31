@@ -1,0 +1,154 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+group = 'cn.i7mc'
+version = project.findProperty('projectVersion') ?: '1.0.0'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+compileJava.options.encoding = 'UTF-8'
+
+repositories {
+    mavenCentral()
+    
+    // Spigot repository
+    maven {
+        name = 'spigot-repo'
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+    }
+    
+    // PlaceholderAPI repository
+    maven {
+        name = 'placeholderapi'
+        url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
+    }
+}
+
+dependencies {
+    // Local JAR dependencies (system scope equivalents)
+    compileOnly files('libs/spigot-1.12.2.jar')
+    compileOnly files('libs/BungeeCord.jar')
+    compileOnly files('libs/Vault.jar')
+    compileOnly files('libs/PlayerPoints.jar')
+    compileOnly files('libs/PlaceholderAPI.jar')
+    compileOnly files('libs/DragonCore.jar')
+    
+    // External dependencies
+    compileOnly 'com.google.code.gson:gson:2.10.1'
+    compileOnly 'org.yaml:snakeyaml:2.0'
+}
+
+// Configure JAR task
+jar {
+    archiveBaseName = project.name
+    archiveVersion = project.version
+    
+    manifest {
+        attributes(
+            'Class-Path': configurations.runtimeClasspath.collect { it.getName() }.join(' ')
+        )
+    }
+}
+
+// Configure Shadow JAR task (equivalent to maven-shade-plugin)
+shadowJar {
+    archiveBaseName = project.name
+    archiveClassifier = ''
+    archiveVersion = project.version
+    
+    // Exclude signature files (equivalent to maven-shade-plugin filters)
+    exclude 'META-INF/*.SF'
+    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/*.RSA'
+    
+    // Minimize JAR size by removing unused classes
+    minimize()
+}
+
+// Configure resource processing
+processResources {
+    // Filter resources (equivalent to Maven resource filtering)
+    filesMatching(['plugin.yml', 'config.yml', 'bungee.yml', 'passwd.yml', 'bungee_config.yml', 'Placeholder.yml']) {
+        expand project.properties
+    }
+}
+
+// Default build task
+build {
+    dependsOn shadowJar
+}
+
+// Clean task
+clean {
+    delete 'build'
+}
+
+// Custom task for gradle clean build (as per user requirement)
+task cleanBuild {
+    dependsOn clean, build
+    build.mustRunAfter clean
+}
+
+// Configure test task
+test {
+    useJUnitPlatform()
+}
+
+// 版本迭代函数
+def incrementVersionInFile() {
+    def propsFile = file('gradle.properties')
+    def props = new Properties()
+    propsFile.withInputStream { props.load(it) }
+
+    def currentVersion = props.getProperty('projectVersion')
+    if (currentVersion) {
+        def versionParts = currentVersion.split('\\.')
+        if (versionParts.length >= 4) {
+            // 递增最后一位版本号
+            def lastPart = Integer.parseInt(versionParts[3])
+            versionParts[3] = String.valueOf(lastPart + 1)
+            def newVersion = versionParts.join('.')
+
+            // 更新属性
+            props.setProperty('projectVersion', newVersion)
+
+            // 写回文件
+            propsFile.withOutputStream {
+                props.store(it, "Updated version to ${newVersion}")
+            }
+
+            println "版本已从 ${currentVersion} 更新到 ${newVersion}"
+            return newVersion
+        } else {
+            throw new GradleException("版本格式不正确: ${currentVersion}")
+        }
+    } else {
+        throw new GradleException("未找到 projectVersion 属性")
+    }
+}
+
+// 版本迭代任务
+task incrementVersion {
+    doLast {
+        incrementVersionInFile()
+    }
+}
+
+// 自动版本构建任务 - 仅迭代版本，需要手动重新构建
+task buildWithVersionIncrement {
+    doLast {
+        // 迭代版本
+        def newVersion = incrementVersionInFile()
+
+        println "========================================="
+        println "版本已迭代到: ${newVersion}"
+        println "请运行以下命令完成构建:"
+        println "gradle clean build"
+        println "========================================="
+    }
+}

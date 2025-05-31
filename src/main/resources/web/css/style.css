@@ -1,0 +1,999 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.container {
+    display: flex;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    gap: 20px;
+}
+
+.player-list {
+    flex: 1;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.player-list h2 {
+    margin-bottom: 15px;
+    color: #2c3e50;
+}
+
+.player-list ul {
+    list-style: none;
+    max-height: 500px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.player-list ul::-webkit-scrollbar {
+    width: 8px;
+}
+
+.player-list ul::-webkit-scrollbar-track {
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.player-list ul::-webkit-scrollbar-thumb {
+    background: #c6c6c6;
+    border-radius: 4px;
+}
+
+.player-list ul::-webkit-scrollbar-thumb:hover {
+    background: #a0a0a0;
+}
+
+.player-list li {
+    padding: 10px;
+    margin: 5px 0;
+    background: #f8f9fa;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.player-list li:hover {
+    background: #e9ecef;
+}
+
+.player-list li.active {
+    background-color: #8B8B8B;
+    color: white;
+    border: 1px solid #373737;
+    border-right-color: #5a5a5a;
+    border-bottom-color: #5a5a5a;
+    box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* 皮肤查看器样式 */
+.player-skin-section {
+    margin-bottom: 20px;
+}
+
+.skin-viewer-container {
+    width: 100%;
+    height: 300px;
+    background-color: #1e272e;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    margin-bottom: 20px;
+    cursor: pointer; /* 指示可以点击切换动画 */
+}
+
+/* 确保canvas占满容器 */
+.skin-viewer-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+    image-rendering: pixelated;
+}
+
+/* 在加载皮肤时显示的加载指示器 */
+.skin-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 16px;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px 20px;
+    border-radius: 5px;
+    z-index: 10;
+}
+
+/* 皮肤加载错误时的提示 */
+.skin-error {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ff6b6b;
+    font-size: 16px;
+    text-align: center;
+    width: 80%;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 15px;
+    border-radius: 5px;
+    z-index: 10;
+}
+
+/* 调整现有样式，为皮肤查看器留出更好的布局空间 */
+.player-info {
+    flex: 2;
+    background: #5c5c5c;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+/* 装备栏Minecraft风格背景 */
+.equipment-section {
+    margin-bottom: 20px;
+    background-color: #c6c6c6;
+    border-radius: 4px;
+    padding: 12px;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.equipment-section h3, .inventory-section h3 {
+    margin-bottom: 15px;
+    color: #ffff55; /* Minecraft的黄色标题 */
+    text-align: center;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8);
+    font-weight: bold;
+    font-family: 'Minecraft', Arial, sans-serif;
+    letter-spacing: 1px;
+}
+
+/* 整合显示区域 - 盔甲、皮肤、主副手 */
+.integrated-display {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
+    background-color: #8B8B8B;
+    border-radius: 8px;
+    padding: 15px;
+    height: 300px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    border: 1px solid #404040;
+}
+
+/* 新增装备容器，限制在红框内 */
+.equipment-container {
+    display: flex;
+    flex: 2.5;
+    height: 100%;
+    margin-right: 15px;
+}
+
+/* 状态栏样式 */
+.status-bar {
+    flex: 2.5;
+    background-color: #373737;
+    border-radius: 6px;
+    padding: 15px;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.status-bar h3 {
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    text-align: center;
+    color: #ffff55;
+}
+
+.status-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    gap: 8px;
+}
+
+.status-item {
+    display: flex;
+    margin: 5px 0;
+    padding: 8px;
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.2);
+    align-items: center;
+}
+
+.status-label {
+    font-weight: bold;
+    color: #ffff55;
+    flex: 0.8;
+    margin-right: 10px;
+}
+
+.status-value {
+    color: #ffffff;
+    flex: 1.2;
+    text-align: right;
+    font-family: 'Minecraft', monospace;
+    word-break: break-all;
+}
+
+/* 生命值条样式 */
+.health-bar-container {
+    position: relative;
+    flex: 1.45;
+    height: 20px;
+    background-color: #555;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.health-bar {
+    height: 100%;
+    width: 50%;
+    background-color: #4CAF50;
+    transition: width 0.3s ease;
+}
+
+.health-value {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.7);
+}
+
+/* 调整原有列样式以适应新布局 */
+.armor-column {
+    flex: 0.9;
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    padding-right: 5px;
+}
+
+.skin-column {
+    flex: 1.8;
+    height: 100%;
+    margin: 0 5px;
+}
+
+.hands-column {
+    flex: 0.9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding-left: 5px;
+}
+
+.armor-slots {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: center;
+    height: 100%;
+}
+
+.hands-slots {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%;
+    justify-content: center;
+}
+
+.skin-viewer-container {
+    width: 100%;
+    height: 100%;
+    background-color: #1e272e;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+h3 {
+    margin-bottom: 15px;
+    color: #2c3e50;
+}
+
+/* Minecraft风格物品栏背景 */
+.inventory-section {
+    position: relative;        /* 设置相对定位，使子元素可以相对于此元素定位 */
+    padding: 1px;             /* 设置内边距为1像素，让内容与边框保持微小间距 */
+    padding-top: 1px;         /* 顶部内边距设置为1像素，确保标题与顶部有适当间距 */
+    margin-top: 1px;         /* 顶部外边距设置为10像素，与上方元素保持间距 */
+    border-radius: 4px;       /* 设置边框圆角为4像素，使外观更圆滑 */
+    background-color: #c6c6c6; /* 设置背景色为浅灰色，模仿Minecraft风格 */
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.3), /* 添加内阴影，深度为1像素，30%透明度 */
+                0 2px 4px rgba(0, 0, 0, 0.2);        /* 添加外阴影，营造立体感 */
+    display: block;           /* 设置为块级元素，独占一行 */
+}
+
+/* 调整物品栏样式使其更像Minecraft */
+.inventory-container {
+    display: flex;
+    width: 100%;
+}
+
+/* 标题容器样式 - 用于包含物品栏和经济信息的标题 */
+.inventory-header-container {
+    display: flex;             /* 改为flex布局，使标题可以水平排列 */
+    justify-content: space-between; /* 两端对齐，标题之间留有空间 */
+    margin-bottom: 1px;       /* 底部外边距控制与下方内容的间距 */
+    width: 100%;              /* 确保容器占满整行 */
+    text-align: center;       /* 文本居中 */
+}
+
+.inventory-title {
+    margin: 1px;         /* 上下外边距10px，左右外边距5px */
+    color: #ffff55;           /* 设置文字颜色为亮黄色 */
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8);
+    text-align: center;
+    font-family: 'Minecraft', Arial, sans-serif;
+    font-weight: bold;
+    letter-spacing: 1px;
+    padding: 1px;
+	position: relative;
+	left: 150px;
+}
+
+.economy-title {
+    margin: 1px;
+    color: #ffff55;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8);
+    text-align: center;
+    font-family: 'Minecraft', Arial, sans-serif;
+    font-weight: bold;
+    letter-spacing: 1px;
+    padding: 1px;
+	position: relative;
+	right: 130px;
+}
+
+/* 经济信息样式 */
+.economy-info {
+    width: 100%;
+    padding: 1px;
+    background-color: #373737;
+    border-radius: 4px;
+    border: 1px solid #5a5a5a;
+    box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+}
+
+.economy-info h3 {
+    color: #ffff55;
+    text-align: center;
+    margin-bottom: 1px;
+    font-size: 1.1rem;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8);
+}
+
+/* 更多信息容器 */
+.economy-container {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 15px;
+    padding-top: 10px;
+    padding-left: 3px;
+    max-height: 250px; /* 限制高度，与现有三个条目高度相匹配 */
+    overflow-y: auto; /* 添加垂直滚动条 */
+    scrollbar-width: thin; /* Firefox 细滚动条 */
+    scrollbar-color: rgba(255, 255, 255, 0.3) rgba(0, 0, 0, 0.2); /* Firefox 滚动条颜色 */
+}
+
+/* 自定义滚动条样式（Webkit浏览器） */
+.economy-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.economy-container::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+.economy-container::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+}
+
+.economy-container::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+/* 经济信息项 */
+.economy-item {
+    display: flex;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 5px;
+    padding: 10px;
+    color: #FFFFFF;
+    margin-bottom: 3px;
+    transition: background-color 0.2s ease;
+}
+
+.economy-item:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.economy-icon {
+    width: 26px;
+    height: 26px;
+    background-color: #8B8B8B;
+    border: 1px solid #373737;
+    border-right-color: #5a5a5a;
+    border-bottom-color: #5a5a5a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+    padding: 2px;
+}
+
+.economy-icon img {
+    width: 24px;
+    height: 24px;
+    image-rendering: pixelated;
+}
+
+.economy-details {
+    flex: 1;
+    display: flex;           /* 添加弹性布局 */
+    align-items: center;     /* 垂直居中对齐 */
+    justify-content: space-between; /* 两端对齐，让货币名称靠右 */
+    padding-right: 3px;      /* 右侧添加3px内边距 */
+}
+
+.balance-amount {
+    font-size: 1.2rem;
+    color: #ffff55;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8);
+    display: inline;        /* 改为内联显示 */
+}
+
+.currency-name {
+    font-size: 1.2rem;      /* 调整字体大小与数值相同 */
+    color: #ffffff;
+    display: inline;        /* 改为内联显示 */
+}
+
+.inventory-slots .item-slot {
+    background-color: #8B8B8B;
+    border: 1px solid #373737;
+    border-right-color: #5a5a5a;
+    border-bottom-color: #5a5a5a;
+    box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.inventory-slots .item-slot:hover {
+    background-color: #9B9B9B;
+    border: 1px solid #FFBA00;
+    box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.inventory-slots .item-slot.has-item {
+    background-color: #8B8B8B;
+}
+
+/* 统一所有物品槽的样式 */
+.item-slot {
+    width: 38px;
+    height: 38px;
+    background: #8B8B8B;
+    border: 1px solid #373737;
+    border-right-color: #5a5a5a;
+    border-bottom-color: #5a5a5a;
+    border-radius: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* 整合显示区域内的特殊样式 */
+.integrated-display .item-slot {
+    width: 36px;
+    height: 36px;
+    border: 1px solid #373737;
+    border-right-color: #5a5a5a;
+    border-bottom-color: #5a5a5a;
+    box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.item-icon {
+    width: 38px;
+    height: 38px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: relative;
+    image-rendering: pixelated;
+}
+
+.integrated-display .item-icon {
+    width: 30px;
+    height: 30px;
+}
+
+.integrated-display .armor-slots .item-slot,
+.integrated-display .hands-slots .item-slot {
+    background-color: #8B8B8B;
+}
+
+/* 主手副手标签样式 */
+.item-slot.main-hand::before,
+.item-slot.off-hand::before,
+.item-slot.helmet::before,
+.item-slot.chestplate::before,
+.item-slot.leggings::before,
+.item-slot.boots::before {
+    content: attr(data-label);
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: #6c757d;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8);
+    white-space: nowrap;
+}
+
+/* 调整计数样式 */
+.item-count {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    font-size: 10px;
+    font-weight: bold;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 0 1px;
+    min-width: 12px;
+    text-align: center;
+    text-shadow: 1px 1px 1px #000;
+}
+
+.tooltip-content {
+    display: none;
+    position: fixed;
+    background: rgba(0,0,0,0.95);
+    color: white;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    z-index: 1000;
+    min-width: 230px;
+    white-space: normal;
+    pointer-events: none;
+    overflow: visible;
+    box-shadow: 0 0 15px rgba(0,0,0,0.7);
+    border: 1px solid rgba(200,200,200,0.3);
+    line-height: 1.4;
+    text-align: left;
+    width: max-content;
+    max-width: 300px;
+}
+
+/* 当tooltip需要显示在物品下方时使用这个类 */
+.tooltip-content.tooltip-bottom {
+    /* 不再需要这些属性，我们使用精确计算的位置 */
+}
+
+/* 确保tooltip内部元素样式一致 */
+.tooltip-content > div {
+    margin: 2px 0;
+    width: 100%;
+}
+
+.item-slot:hover .tooltip-content {
+    display: block;
+}
+
+.item-slot .obfuscated {
+    display: inline-block;
+    animation: obfuscate 0.1s infinite;
+}
+
+@keyframes obfuscate {
+    0% { opacity: 0.3; }
+    50% { opacity: 0.7; }
+    100% { opacity: 0.3; }
+}
+
+/* 统一所有物品槽标签样式 */
+.item-slot[data-label]::before {
+    content: attr(data-label);
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: #6c757d;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8);
+    white-space: nowrap;
+}
+
+/* 添加tooltip标题和lore的样式 */
+.tooltip-title {
+    margin-bottom: 4px !important;
+    font-size: 15px;
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+    padding-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tooltip-lore {
+    display: block;
+    width: 100%;
+    background: rgba(0,0,0,0.95);
+}
+
+.tooltip-lore > div {
+    font-size: 13.5px;
+    line-height: 1.4;
+    margin: 2px 0 !important;
+    background: rgba(0,0,0,0.95);
+}
+
+/* 物品详情模态弹窗样式 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal.active {
+    opacity: 1;
+}
+
+.modal-content {
+    background-color: rgba(0, 0, 0, 0.98);
+    margin: 5% auto;
+    padding: 0;
+    width: 80%;
+    max-width: 600px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+    border: 2px solid #404040;
+    border-radius: 4px;
+    position: relative;
+    transform: scale(0.9);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.modal.active .modal-content {
+    transform: scale(1);
+    opacity: 1;
+}
+
+@keyframes modalAppear {
+    from {transform: scale(0.9); opacity: 0;}
+    to {transform: scale(1); opacity: 1;}
+}
+
+.modal-header {
+    padding: 10px 15px;
+    background-color: rgba(10, 10, 10, 0.98);
+    color: #ffff55;
+    border-bottom: 2px solid #404040;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-family: 'Minecraft', Arial, sans-serif;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8);
+    font-size: 1.5em;
+}
+
+.modal-header .close-button {
+    color: #f0f0f0;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: -5px;
+}
+
+.modal-header .close-button:hover {
+    color: #ffff55;
+}
+
+.modal-body {
+    padding: 15px;
+    max-height: 70vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.98);
+}
+
+.item-detail-image-container {
+    text-align: center;
+    margin-bottom: 15px;
+    background-color: rgba(12, 12, 12, 0.98);
+    padding: 20px;
+    border-radius: 4px;
+    border: 1px solid #404040;
+}
+
+.item-detail-image {
+    width: 128px;
+    height: 128px;
+    image-rendering: pixelated;
+}
+
+.item-detail-info {
+    background-color: rgba(12, 12, 12, 0.98);
+    padding: 15px;
+    border-radius: 4px;
+    border: 1px solid #404040;
+}
+
+.item-detail-info h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: white;
+    font-size: 1.2em;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    padding-bottom: 5px;
+}
+
+.item-detail-lore {
+    color: #AAAAAA;
+    line-height: 1.5;
+    font-size: 16px;
+    max-height: 250px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+/* 自定义滚动条 */
+.item-detail-lore::-webkit-scrollbar {
+    width: 10px;
+}
+
+.item-detail-lore::-webkit-scrollbar-track {
+    background: #2a2a2a;
+    border-radius: 5px;
+}
+
+.item-detail-lore::-webkit-scrollbar-thumb {
+    background: #555555;
+    border-radius: 5px;
+}
+
+.item-detail-lore::-webkit-scrollbar-thumb:hover {
+    background: #666666;
+}
+
+.modal-body::-webkit-scrollbar {
+    width: 10px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: #2a2a2a;
+    border-radius: 5px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: #555555;
+    border-radius: 5px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: #666666;
+}
+
+/* 坐标值样式优化 */
+.player-coords .status-value {
+    font-size: 0.95em;
+}
+
+/* 坐标容器样式 */
+.coords-container {
+    flex: 1.2;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* 单行坐标显示 */
+.single-line-coords {
+    color: #ffffff;
+    font-size: 0.9em;
+    width: 100%;
+    font-family: 'Minecraft', monospace;
+    display: flex;
+    justify-content: flex-start;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+.single-line-coords span {
+    display: inline-block;
+    min-width: 40px;
+    text-align: left;
+}
+
+/* 移除旧的坐标样式 */
+.coords-inline, .coord-item, .coords-table, .coord-row {
+    display: none;
+}
+
+.item-slot:hover {
+    border: 1px solid #FFBA00 !important;
+    background-color: #9B9B9B;
+}
+
+/* 通知和提示信息样式 */
+.notice {
+    padding: 15px;
+    margin: 10px 0;
+    background-color: #fff3cd;
+    color: #856404;
+    border-radius: 4px;
+    border-left: 4px solid #ffeeba;
+    text-align: center;
+}
+
+.error {
+    padding: 15px;
+    margin: 10px 0;
+    background-color: #f8d7da;
+    color: #721c24;
+    border-radius: 4px;
+    border-left: 4px solid #f5c6cb;
+    text-align: center;
+}
+
+.loading {
+    padding: 15px;
+    margin: 10px 0;
+    background-color: #e9ecef;
+    color: #495057;
+    border-radius: 4px;
+    text-align: center;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+
+/* 不再需要返回按钮样式，已删除 */
+
+/* 错误文本样式 */
+.error-text {
+    color: #ff6b6b;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8);
+}
+
+/* 物品栏和经济信息列样式 */
+.inventory-column, .economy-column {
+    width: 50%;                /* 设置每列占据50%宽度 */
+    display: flex;             /* 使用弹性盒子布局 */
+    flex-direction: column;    /* 垂直排列子元素 */
+}
+
+.economy-column {
+    padding-left: 1px;        /* 经济信息列左侧添加10px内边距 */
+    padding-top: 1px;         /* 经济信息列顶部添加10px内边距 */
+}
+
+.inventory-title, .economy-title {
+    margin: 10px 0 0 0;    /* 增加上下边距为10px */
+    color: #ffff55;            /* 标题颜色设置为Minecraft风格的黄色 */
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8); /* 添加文字阴影效果 */
+    text-align: center;        /* 文字居中显示 */
+    font-family: 'Minecraft', Arial, sans-serif; /* 使用Minecraft字体，备用Arial和无衬线字体 */
+    font-weight: bold;         /* 文字加粗 */
+    letter-spacing: 1px;       /* 字母间距1px */
+    display: block;            /* 确保标题显示为块级元素 */
+    padding: 1px;              /* 添加内边距 */
+}
+
+.inventory-slots {
+    display: grid;             /* 使用网格布局 */
+    grid-template-columns: repeat(9, 1fr); /* 创建9列等宽网格 */
+    grid-template-rows: repeat(6, auto); /* 修改为6行：4行原版 + 2行扩展 */
+    column-gap: 1px;           /* 物品格子横向间隙为1px */
+    row-gap: 1px;              /* 物品格子垂直间隙为1px */
+    background-color: #373737; /* 背景色设置为深灰色 */
+    padding: 3px;              /* 四周内边距3px */
+    padding-top: 10px;         /* 顶部内边距10px */
+    padding-bottom: 10px;      /* 底部内边距10px */
+    border-radius: 4px;        /* 圆角4px */
+    border: 1px solid #5a5a5a; /* 1px宽的深灰色边框 */
+    box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.5); /* 内阴影效果 */
+    width: 100%;               /* 宽度占满容器 */
+}
+
+/* DragonCore分隔线 */
+.dragoncore-separator {
+    grid-column: 1 / -1;       /* 横跨所有列 */
+    height: 3px;               /* 高度1px */
+    background-color: #c6c6c6; /* 浅灰色背景 */
+    margin: 4px 0;             /* 上下外边距4px */
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.3), /* 添加内阴影，深度为1像素，30%透明度 */
+                0 2px 4px rgba(0, 0, 0, 0.2);        /* 添加外阴影，营造立体感 */
+}
+
+/* DragonCore物品槽 */
+.dragoncore-slot {
+    width: 38px;               /* 与原版物品槽相同宽度 */
+    height: 38px;              /* 与原版物品槽相同高度 */
+    background-color: #8B8B8B; /* 与原版物品槽相同背景色 */
+    border: 1px solid #373737; /* 与原版物品槽相同边框 */
+    border-right-color: #5a5a5a;
+    border-bottom-color: #5a5a5a;
+    box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dragoncore-slot:hover {
+    background-color: #9B9B9B; /* 与原版物品槽相同悬停背景色 */
+    border: 1px solid #FFBA00; /* 与原版物品槽相同悬停边框色 */
+}
+
+/* 滚动模式的经济容器 */
+.economy-container.scrollable {
+    position: relative;
+    padding-right: 12px; /* 为滚动条留出空间 */
+    transition: all 0.3s ease;
+}
+
+/* 增强滚动体验的样式 */
+.economy-container.scrollable:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.5); /* 悬停时更明显的滚动条 */
+}
+
+/* 滚动时的高亮效果 */
+.economy-container.scrollable::-webkit-scrollbar-thumb:active {
+    background-color: rgba(255, 255, 255, 0.7);
+}

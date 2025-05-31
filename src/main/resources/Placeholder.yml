@@ -1,0 +1,78 @@
+# 更多信息区域占位符配置
+# 此配置文件用于定义在web界面"更多信息"区域显示的自定义占位符信息
+# 所有占位符都依赖PlaceholderAPI插件，请确保正确安装并配置
+# 占位符名称显示已移至namemap.cnf配置文件中统一管理
+
+# 当信息过多超出显示区域时，会自动添加滚动条
+# 优先级(priority)数值越小，显示位置越靠前
+
+placeholders:
+  # 经济信息（默认内置）
+  economy:
+    enabled: true                    # 是否启用
+    icon: "gold_ingot"               # 图标名称，对应资源包中的物品ID
+    placeholder: "%vault_eco_balance%" # PlaceholderAPI占位符
+    priority: 10                     # 显示优先级，数值越小越靠前
+  
+  # 点券信息（默认内置）
+  points:
+    enabled: true
+    icon: "emerald"
+    placeholder: "%playerpoints_points%"
+    priority: 20
+  
+  # 以下为示例自定义占位符，可根据需要修改或删除
+  
+  # 攻击力示例
+  attack:
+    enabled: true                   # 默认禁用，需要时设置为true
+    icon: "iron_sword"
+    placeholder: "%ap_attack%"
+    priority: 30
+
+  # 防御力示例
+  defense:
+    enabled: true                   # 默认禁用，需要时设置为true
+    icon: "iron_chestplate"
+    placeholder: "%ap_defense%"
+    priority: 40
+  # 移速示例
+  moving:
+    enabled: true                   # 默认禁用，需要时设置为true
+    icon: "iron_boots"
+    placeholder: "%ap_moving:max%"
+    priority: 50
+
+  crit:
+    enabled: true                   # 默认禁用，需要时设置为true
+    icon: "gold_sword"
+    placeholder: "%ap_crit:max%"
+    priority: 60
+
+  crit_rate:
+    enabled: true                   # 默认禁用，需要时设置为true
+    icon: "resstone"
+    placeholder: "%ap_crit_rate:max%"
+    priority: 70
+  
+  # 生命上限示例
+  health:
+    enabled: false
+    icon: "golden_apple"
+    placeholder: "%rpg_max_health%"
+    priority: 80
+  
+  # 魔力值示例
+  mana:
+    enabled: false
+    icon: "lapis_lazuli"
+    placeholder: "%rpg_mana%/%rpg_max_mana%"
+    priority: 90
+    
+  # 你可以添加更多自定义占位符...
+  # 示例格式:
+  # 唯一标识符:
+  #   enabled: true/false
+  #   icon: "物品ID"
+  #   placeholder: "%占位符%"
+  #   priority: 数字

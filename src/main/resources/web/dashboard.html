@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>玩家信息查看器</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/skinview3d@3.0.0-alpha.1/bundles/skinview3d.bundle.js"></script>
+    <style>
+        /* 服务器选择器样式 */
+        .server-selector {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .server-selector-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        .server-selector-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+        
+        .server-list {
+            display: none;
+            margin-top: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .server-list.active {
+            display: block;
+        }
+        
+        .server-item {
+            padding: 8px 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .server-item:hover {
+            background-color: #e9e9e9;
+        }
+        
+        .server-item.active {
+            background-color: #e2f3fd;
+            font-weight: bold;
+        }
+        
+        .player-count {
+            background-color: #4caf50;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+        
+        .arrow-icon {
+            transition: transform 0.3s;
+        }
+        
+        .arrow-icon.active {
+            transform: rotate(180deg);
+        }
+        
+        /* 用户信息和注销按钮 */
+        .user-info {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .logout-button {
+            margin-left: 10px;
+            padding: 5px 10px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .logout-button:hover {
+            background-color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+    <!-- 会话检查脚本 -->
+    <script>
+        // 检查会话是否有效
+        function checkSession() {
+            fetch('/api/auth/check', {
+                method: 'GET',
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.loggedIn) {
+                    // 未登录，重定向到登录页面
+                    window.location.href = '/login.html?redirect=' + encodeURIComponent(window.location.pathname);
+                } else {
+                    // 已登录，显示用户信息
+                    document.getElementById('username').textContent = data.username || '用户';
+                }
+            })
+            .catch(error => {
+                console.error('检查会话状态错误:', error);
+                // 出错时也重定向到登录页面
+                window.location.href = '/login.html';
+            });
+        }
+        
+        // 注销
+        function logout() {
+            fetch('/api/auth/logout', {
+                method: 'POST',
+                credentials: 'include'
+            })
+            .then(() => {
+                // 重定向到登录页面
+                window.location.href = '/login.html';
+            })
+            .catch(error => {
+                console.error('注销错误:', error);
+                // 出错时也重定向到登录页面
+                window.location.href = '/login.html';
+            });
+        }
+        
+        // 页面加载时检查会话
+        document.addEventListener('DOMContentLoaded', checkSession);
+    </script>
+
+    <div class="container">
+        <!-- 用户信息和注销按钮 -->
+        <div class="user-info">
+            欢迎，<span id="username">用户</span>
+            <button class="logout-button" onclick="logout()">注销</button>
+        </div>
+        
+        <div class="player-list">
+            <h2>在线玩家</h2>
+            <!-- 添加服务器选择器 -->
+            <div class="server-selector">
+                <div class="server-selector-header" id="serverSelectorHeader">
+                    <h3>选择子服</h3>
+                    <span class="arrow-icon">▼</span>
+                </div>
+                <div class="server-list" id="serverList">
+                    <!-- 服务器列表将在这里动态生成 -->
+                </div>
+            </div>
+            <ul id="playerList"></ul>
+        </div>
+        <div class="player-info">
+            <div class="equipment-section">
+                <h3>装备栏</h3>
+                <div class="integrated-display">
+                    <div class="equipment-container">
+                        <div class="armor-column">
+                            <div id="armorSlots" class="armor-slots">
+                                <div class="item-slot helmet" data-tooltip="" data-label="头盔"></div>
+                                <div class="item-slot chestplate" data-tooltip="" data-label="胸甲"></div>
+                                <div class="item-slot leggings" data-tooltip="" data-label="护腿"></div>
+                                <div class="item-slot boots" data-tooltip="" data-label="靴子"></div>
+                            </div>
+                        </div>
+                        <div class="skin-column">
+                            <div id="skinViewer" class="skin-viewer-container">
+                                <!-- 2D模型皮肤将在此显示 -->
+                            </div>
+                        </div>
+                        <div class="hands-column">
+                            <div class="hands-slots">
+                                <div class="item-slot main-hand" data-tooltip="" data-label="主手"></div>
+                                <div class="item-slot off-hand" data-tooltip="" data-label="副手"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="status-bar">
+                        <h3>玩家状态</h3>
+                        <div class="status-container">
+                            <div class="status-item player-name">
+                                <span class="status-label">玩家名:</span>
+                                <span id="playerNameStatus" class="status-value">--</span>
+                            </div>
+                            <div class="status-item player-level">
+                                <span class="status-label">等级:</span>
+                                <span id="playerLevelStatus" class="status-value">0</span>
+                            </div>
+                            <div class="status-item player-health">
+                                <span class="status-label">生命值:</span>
+                                <div class="health-bar-container">
+                                    <div id="healthBar" class="health-bar"></div>
+                                    <span id="healthValue" class="health-value">0/0</span>
+                                </div>
+                            </div>
+                            <div class="status-item player-coords">
+                                <span class="status-label">坐标:</span>
+                                <div class="coords-container">
+                                    <div class="single-line-coords">
+                                        <div>X: <span id="playerCoordsX">0</span></div>
+                                        <div>Y: <span id="playerCoordsY">0</span></div>
+                                        <div>Z: <span id="playerCoordsZ">0</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="inventory-section">
+                <div class="inventory-header-container">
+                    <h3 class="inventory-title">物品栏</h3>
+                    <h3 class="economy-title">更多信息</h3>
+                </div>
+                <div class="inventory-container">
+                    <div id="inventorySlots" class="inventory-slots"></div>
+                    <div class="economy-info">
+                        <div class="economy-container" id="placeholderContainer">
+                            <!-- 移除固定的经济和点券元素，改为通过JS动态生成占位符元素 -->
+                            <!-- 占位符数据将通过PlaceholderManager.js动态加载 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 物品详情模态弹窗 -->
+    <div id="itemDetailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close-button">&times;</span>
+                <h2 id="itemDetailTitle">物品详情</h2>
+            </div>
+            <div class="modal-body">
+                <div class="item-detail-image-container">
+                    <img id="itemDetailImage" class="item-detail-image" src="" alt="物品图片">
+                </div>
+                <div class="item-detail-info">
+                    <h3 id="itemDetailName"></h3>
+                    <div id="itemDetailLore" class="item-detail-lore"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/skinViewer.js"></script>
+    <script src="js/placeholder.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html> 

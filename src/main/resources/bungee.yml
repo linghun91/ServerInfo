@@ -1,0 +1,10 @@
+name: PlayerInfo
+version: 1.0.0
+main: cn.i7mc.playerinfo.plugin.BungeePlugin
+author: i7mc
+description: A player information display plugin with web interface for BungeeCord
+commands:
+  playerinfo:
+    description: Control the PlayerInfo plugin
+    permission: playerinfo.admin
+    aliases: [pinfo, pi] 
